@@ -112,6 +112,11 @@ print("With augmentation - Train:", history_aug.history['accuracy'][-1], "Test:"
 
 
 or fisnet:
+
+pip install tensorflow matplotlib
+MyDataset.zip
+!unzip MyDataset.zip
+
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
@@ -220,4 +225,5 @@ print("Test accuracy (with augmentation):", history_aug.history['val_accuracy'][
 print("Accuracy comparison:")
 print("No augmentation - Train:", history.history['accuracy'][-1], "Test:", history.history['val_accuracy'][-1])
 print("With augmentation - Train:", history_aug.history['accuracy'][-1], "Test:", history_aug.history['val_accuracy'][-1])
+
 
