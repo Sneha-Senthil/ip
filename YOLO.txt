@@ -1,63 +1,78 @@
+pip install ultralytics opencv-python matplotlib onnx onnxruntime onnxslim
 YOLO
 
+vs code
 from ultralytics import YOLO
 import cv2
 import matplotlib.pyplot as plt
 
+# -----------------------------
+# 1. Load YOLOv8 model
+# -----------------------------
 model = YOLO("yolov8n.pt")
-results = model("")
+
+# -----------------------------
+# 2. Give your image path HERE
+# -----------------------------
+image_path = "image3.jpg"  # Replace with your image name
+
+# -----------------------------
+# 3. Run YOLO inference
+# -----------------------------
+results = model(image_path)
 print(results)
 
-# Visualize bounding boxes by getting annotated image (numpy array)
-annotated_img = results[0].plot() # results[0] is the first (and only) image result
+# -----------------------------
+# 4. Show detection using OpenCV
+# -----------------------------
+annotated_img = results[0].plot()
 
-# Show using OpenCV (BGR format)
 cv2.imshow("YOLOv8 Detection", annotated_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-# OR show inline with matplotlib (convert BGR to RGB)
+# -----------------------------
+# 5. Show using matplotlib
+# -----------------------------
 plt.imshow(cv2.cvtColor(annotated_img, cv2.COLOR_BGR2RGB))
-plt.axis('off')
+plt.axis("off")
 plt.show()
 
-# Export the model to ONNX format
+# -----------------------------
+# 6. Export to ONNX
+# -----------------------------
+success = model.export(format="onnx")
+print("Export success:", success)
+
+colab
+from ultralytics import YOLO
+import cv2
+from google.colab.patches import cv2_imshow
+import matplotlib.pyplot as plt
+
+# 1. Load YOLO model
+model = YOLO("yolov8n.pt")   # Small + fast
+
+# 2. Give your input image path
+image_path = "/content/image3.jpg"  # <-- update your file name if needed
+
+# 3. Run YOLO on the image
+results = model(image_path)
+print(results)
+
+# 4. Get annotated image
+annotated_img = results[0].plot()
+
+# 5. Show using cv2_imshow (Colab safe)
+cv2_imshow(annotated_img)
+
+# 6. Show using matplotlib
+plt.imshow(cv2.cvtColor(annotated_img, cv2.COLOR_BGR2RGB))
+plt.axis("off")
+plt.show()
+
+# 7. Export ONNX model (optional)
 success = model.export(format='onnx')
 print("Export success:", success)
 
-success = model.export(format='onnx')
--------------------------------------------------------------------
-import cv2
-from ultralytics import YOLO
 
-# Step 1: Load a pre-trained YOLOv8 model
-# 'yolov8n.pt' is the smallest and fastest model variant
-model = YOLO('yolov8m.pt')
-
-# Step 2: Set the image path
-# Replace 'path/to/your/image.jpg' with the actual path to your image
-image_path = 'path/to/your/image.jpg'
-
-# Step 3: Perform object detection on the image
-# The 'conf' argument sets the minimum confidence score for detected objects
-results = model.predict(image_path, conf=0.5)
-
-# Step 4: Display and analyze the results
-for r in results:
-    # Get the detected objects and draw them on the image
-    im_array = r.plot()
-    
-    # Display what the model has identified
-    print("--- Detected Objects ---")
-    for box in r.boxes:
-        # Get the bounding box coordinates, class, and confidence score
-        class_id = int(box.cls[0])
-        class_name = model.names[class_id]
-        confidence = float(box.conf[0])
-        
-        print(f"Class: {class_name}, Confidence: {confidence:.2f}")
-
-    # Display the image with bounding boxes
-    cv2.imshow("YOLO Detection", im_array)
-    cv2.waitKey(0)  # Press any key to close the window
-    cv2.destroyAllWindows()
